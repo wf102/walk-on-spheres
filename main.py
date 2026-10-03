@@ -8,11 +8,11 @@ y1 = 1.0
 
 T_x0 = 100.0
 T_x1 = 50.0
-T_y0 = 100.0
-T_y1 = 0.0
+T_y0 = 0.0
+T_y1 = 100.0
 
 eps = 0.01
-grid_size = 20
+grid_size = 50
 
 def boundary_temp(x, y):
 
@@ -21,18 +21,13 @@ def boundary_temp(x, y):
     return (T_x0, T_x1, T_y0, T_y1)[edge]
 
 
-
 def walk_once(x, y):
 
     while True:
-
         r = min(x - x0, x1 - x, y - y0, y1 - y)
-
         if r < eps:
             return boundary_temp(x, y)
-
         theta = np.random.uniform(0, 2*np.pi)
-
         x += r * np.cos(theta)
         y += r * np.sin(theta)
 
@@ -43,6 +38,7 @@ def temperature_wos(x, y, n_walks=1000):
     return np.mean(samples)
 
 def temperature(x, y):
+
     sum = 0
     for n in range(1, 40):
         sum += 2 / (n * np.pi) * (1 - (-1)**n) * (
@@ -52,6 +48,44 @@ def temperature(x, y):
             T_x1 * np.sin(n * np.pi * y / (y1 - y0)) * np.sinh((n * np.pi * x / (x1 - x0))) / np.sinh(n * np.pi)
             )
     return sum
+
+
+def plot(T):
+
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+
+    dx = 1.0/(grid_size - 1)
+    extent = [-dx/2, 1.0 + dx/2, -dx/2, 1.0 + dx/2]
+    
+    axes[0].imshow(
+        T[:,:,0],
+        cmap='hot',
+        interpolation='nearest',
+        origin='lower',
+        extent=extent
+    )
+
+    axes[1].imshow(
+        T[:,:,1],
+        cmap='hot',
+        interpolation='nearest',
+        origin='lower',
+        extent=extent
+    )
+
+    for ax in axes:
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1)
+        ax.set_xticks([])
+        ax.set_yticks([])
+
+    axes[0].set_title("Walk-on-spheres")
+    axes[1].set_title("Analytic")
+
+    plt.tight_layout()
+
+    plt.show()
+
 
 def main():
 
@@ -81,10 +115,7 @@ def main():
     T[0, -1] = 0.5 * (T_x1 + T_y0)
     T[-1, -1] = 0.5 * (T_x1 + T_y1)
 
-    print(T)
-
-    plt.imshow(T[:,:,0], cmap='hot', interpolation='nearest')
-    plt.show()
+    plot(T)
 
 if __name__ == "__main__":
     main()
