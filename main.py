@@ -14,6 +14,8 @@ T_b = 0.0
 eps = 0.01
 grid_size = 20
 
+pi = np.pi
+
 def boundary_temp(x, y):
 
     edge = np.argmin([x, Lx - x, y, Ly - y])
@@ -26,7 +28,7 @@ def walk_once(x, y):
         r = min(x, Lx - x, y, Ly - y)
         if r < eps:
             return boundary_temp(x, y)
-        theta = np.random.uniform(0, 2*np.pi)
+        theta = np.random.uniform(0, 2 * pi)
         x += r * np.cos(theta)
         y += r * np.sin(theta)
 
@@ -36,15 +38,15 @@ def temperature_wos(x, y, n_walks=1000):
     samples = [walk_once(x, y) for i in range(n_walks)]
     return np.mean(samples)
 
-def temperature(x, y):
+def temperature(x, y, terms = 20):
 
     sum = 0
-    for n in range(1, 40):
-        sum += 2 / (n * np.pi) * (1 - (-1)**n) * (
-            T_b * np.sin(n * np.pi * x / Lx) * np.sinh(n * np.pi * (Ly - y) / Lx) / np.sinh(n * np.pi * Ly / Lx) +
-            T_t * np.sin(n * np.pi * x / Lx) * np.sinh(n * np.pi * y / Lx) / np.sinh(n * np.pi * Ly / Lx) +
-            T_l * np.sin(n * np.pi * y / Ly) * np.sinh(n * np.pi * (Lx - x) / Ly) / np.sinh(n * np.pi * Lx / Ly) +
-            T_r * np.sin(n * np.pi * y / Ly) * np.sinh(n * np.pi * x / Ly) / np.sinh(n * np.pi * Lx / Ly)
+    for n in range(1, 2 * terms, 2):
+        sum += 4 / (n * pi) * (
+            T_b * np.sin(n * pi * x / Lx) * np.sinh(n * pi * (Ly - y) / Lx) / np.sinh(n * pi * Ly / Lx) +
+            T_t * np.sin(n * pi * x / Lx) * np.sinh(n * pi * y / Lx) / np.sinh(n * pi * Ly / Lx) +
+            T_l * np.sin(n * pi * y / Ly) * np.sinh(n * pi * (Lx - x) / Ly) / np.sinh(n * pi * Lx / Ly) +
+            T_r * np.sin(n * pi * y / Ly) * np.sinh(n * pi * x / Ly) / np.sinh(n * pi * Lx / Ly)
             )
     return sum
 
