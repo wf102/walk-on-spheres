@@ -38,29 +38,33 @@ def temperature_wos(x, y, n_walks=1000):
     samples = [walk_once(x, y) for i in range(n_walks)]
     return np.mean(samples)
 
+def sinh_ratio(a, b):
+
+    return np.exp(a - b) * (1.0 - np.exp(-2.0 * a)) / (1.0 - np.exp(-2.0 * b))
+
 def temperature(x, y, terms = 20):
 
     sum = 0
     for n in range(1, 2 * terms, 2):
         sum += 4 / (n * pi) * (
-            T_b * np.sin(n * pi * x / Lx) * np.sinh(n * pi * (Ly - y) / Lx) / np.sinh(n * pi * Ly / Lx) +
-            T_t * np.sin(n * pi * x / Lx) * np.sinh(n * pi * y / Lx) / np.sinh(n * pi * Ly / Lx) +
-            T_l * np.sin(n * pi * y / Ly) * np.sinh(n * pi * (Lx - x) / Ly) / np.sinh(n * pi * Lx / Ly) +
-            T_r * np.sin(n * pi * y / Ly) * np.sinh(n * pi * x / Ly) / np.sinh(n * pi * Lx / Ly)
+            T_b * np.sin(n * pi * x / Lx) * sinh_ratio(n * pi * (Ly - y) / Lx, n * pi * Ly / Lx) +
+            T_t * np.sin(n * pi * x / Lx) * sinh_ratio(n * pi * y / Lx, n * pi * Ly / Lx) +
+            T_l * np.sin(n * pi * y / Ly) * sinh_ratio(n * pi * (Lx - x) / Ly, n * pi * Lx / Ly) +
+            T_r * np.sin(n * pi * y / Ly) * sinh_ratio(n * pi * x / Ly, n * pi * Lx / Ly)
             )
     return sum
 
 
 def plot(T):
 
-    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    fig, axes = plt.subplots(1, 2, figsize=(5, 5))
 
     dx = 1.0/(grid_size - 1)
     extent = [-dx/2, 1.0 + dx/2, -dx/2, 1.0 + dx/2]
     
     axes[0].imshow(
         T[:,:,0],
-        cmap='hot',
+        cmap='plasma',
         interpolation='nearest',
         origin='lower',
         extent=extent
@@ -68,7 +72,7 @@ def plot(T):
 
     axes[1].imshow(
         T[:,:,1],
-        cmap='hot',
+        cmap='plasma',
         interpolation='nearest',
         origin='lower',
         extent=extent
