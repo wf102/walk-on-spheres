@@ -12,7 +12,7 @@ T_t = 100.0
 T_b = 0.0
 
 eps = 0.01
-grid_size = 20
+grid_size = 10
 
 pi = np.pi
 
@@ -65,25 +65,33 @@ def temperature(x, y, terms = 20):
 def plot_temp_maps(T):
     '''Plot temperature maps of WOS and analytic'''
 
-    fig, axes = plt.subplots(1, 2, figsize=(5, 5))
-
+    fig, axes = plt.subplots(1, 2, figsize=(10, 5))
+    fig.subplots_adjust(left=0.04, right=0.88, wspace=0.1)
+    
     dx = 1.0/(grid_size - 1)
     extent = [-dx/2, 1.0 + dx/2, -dx/2, 1.0 + dx/2]
     
-    axes[0].imshow(
+    vmin = min([T_l, T_r, T_t, T_b])
+    vmax = max([T_l, T_r, T_t, T_b])
+
+    im0 = axes[0].imshow(
         T[:,:,0],
         cmap='plasma',
         interpolation='nearest',
         origin='lower',
-        extent=extent
+        extent=extent,
+        vmin=vmin,
+        vmax=vmax
     )
 
-    axes[1].imshow(
+    im1 = axes[1].imshow(
         T[:,:,1],
         cmap='plasma',
         interpolation='nearest',
         origin='lower',
-        extent=extent
+        extent=extent,
+        vmin=vmin,
+        vmax=vmax
     )
 
     for ax in axes:
@@ -95,8 +103,10 @@ def plot_temp_maps(T):
     axes[0].set_title("Walk-on-spheres")
     axes[1].set_title("Analytic")
 
-    plt.tight_layout()
-    plt.show()
+    cbar = fig.colorbar(im0, ax=axes, fraction=0.0225, pad=0.04)
+    cbar.set_label('Temperature')
+
+    plt.savefig("temp_maps.png")
 
 
 def main():
