@@ -17,12 +17,14 @@ grid_size = 20
 pi = np.pi
 
 def boundary_temp(x, y):
+    '''Return temperature of closest boundary for a given point'''
 
     edge = np.argmin([x, Lx - x, y, Ly - y])
     return (T_l, T_r, T_b, T_t)[edge]
 
 
 def walk_once(x, y):
+    '''Generate a single walk from a given point to an edge'''
 
     while True:
         r = min(x, Lx - x, y, Ly - y)
@@ -34,15 +36,20 @@ def walk_once(x, y):
 
 
 def temperature_wos(x, y, n_walks=1000):
+    '''Generate n_walks walks for a given point and return average temperature from WOS'''
 
     samples = [walk_once(x, y) for i in range(n_walks)]
     return np.mean(samples)
 
+
 def sinh_ratio(a, b):
+    '''Return ratio of sinh functions with the given arguments'''
 
     return np.exp(a - b) * (1.0 - np.exp(-2.0 * a)) / (1.0 - np.exp(-2.0 * b))
 
+
 def temperature(x, y, terms = 20):
+    '''Return analytic solution for a given position'''
 
     sum = 0
     for n in range(1, 2 * terms, 2):
@@ -55,7 +62,8 @@ def temperature(x, y, terms = 20):
     return sum
 
 
-def plot(T):
+def plot_temp_maps(T):
+    '''Plot temperature maps of WOS and analytic'''
 
     fig, axes = plt.subplots(1, 2, figsize=(5, 5))
 
@@ -119,7 +127,7 @@ def main():
     T[0, -1] = 0.5 * (T_r + T_b)
     T[-1, -1] = 0.5 * (T_r + T_t)
 
-    plot(T)
+    plot_temp_maps(T)
 
 if __name__ == "__main__":
     main()
