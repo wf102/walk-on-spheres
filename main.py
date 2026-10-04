@@ -15,6 +15,7 @@ eps = 0.01
 grid_size = 10
 
 pi = np.pi
+np.random.seed(42)
 
 def boundary_temp(x, y):
     '''Return temperature of closest boundary for a given point'''
