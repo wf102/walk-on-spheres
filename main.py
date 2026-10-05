@@ -11,8 +11,8 @@ T_r = 50.0
 T_t = 100.0
 T_b = 0.0
 
-eps = 0.01
-grid_size = 10
+eps = 0.01      # distance that is sufficiently close for a walk to be considered to reach at a boundary
+grid_size = 40  # grid_size * grid_size of internal sample points
 
 pi = np.pi
 np.random.seed(42)
@@ -121,7 +121,7 @@ def main():
 
     # Fill grid with estimates
     for i in range(1, grid_size-1):
-        print(i)
+        print(f"{i * grid_size} out of {grid_size**2} points sampled")
         for j in range(1, grid_size-1):
             T[j, i, 0] = temperature_wos(xs[i], ys[j])
             T[j, i, 1] = temperature(xs[i], ys[j])
